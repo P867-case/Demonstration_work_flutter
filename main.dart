@@ -4,15 +4,15 @@ import 'package:flutter/material.dart';
 import "package:universal_html/html.dart" as html;
 import 'package:web/web.dart' as web;
 
-/// Entrypoint of the application.
 void main() {
   runApp(const MyApp());
 }
 
 
-/// Application itself.
+/// Application self
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
+
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
   }
 }
 
-/// [Widget] displaying the home page consisting of an image the the buttons.
+///[Widget] displaying the home page consisting of an image the the buttons.
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -39,11 +39,11 @@ class _HomePageState extends State<HomePage> {
   bool _isDarkened = false;
   String? _selectedValue;
   
-  // Called after `element` is attached to the DOM.
+  /// Called after `element` is attached to the DOM.
   void onElementAttached(web.HTMLDivElement element) {
     final web.Element? located = web.document.querySelector('#someIdThatICanFindLater');
     assert(located == element, 'Wrong `element` located!');
-    // Do things with `element` or `located`, or call your code now...
+    /// Do things with `element` or `located`, or call your code now...
     element.style.backgroundColor = 'green';
   }
 
@@ -51,37 +51,42 @@ class _HomePageState extends State<HomePage> {
     element as web.HTMLDivElement;
     element.id = 'someIdThatICanFindLater';
 
-    // Create the observer
+    /// Create the observer
     final web.ResizeObserver observer = web.ResizeObserver((
       JSArray<web.ResizeObserverEntry> entries,
       web.ResizeObserver observer,
     ) {
       if (element.isConnected) {
-        // The observer is done, disconnect it.
+        /// The observer is done, disconnect it.
         observer.disconnect();
-        // Call our callback.
+        /// Call our callback.
         onElementAttached(element);
       }
     }.toJS);
 
-    // Connect the observer.
+    /// Connect the observer.
     observer.observe(element);
   }
 
   void _addImageToHtml(String url) {
     if (url.isNotEmpty) {
+      /// find container for append
       var container = html.document.getElementById('someIdThatICanFindLater');
+      /// clear 
       container?.innerHtml = '';
       
+      /// create image
       var imageElement = html.ImageElement()
       ..src = url
       ..alt = 'Image from URL'
       ..id = 'Image';
 
+      /// add target for onDoubleClick
       imageElement.onDoubleClick.listen((event) {
         _toggleFullscreen();
       });
 
+      /// set size for image
       imageElement.style.width = '100%';
       imageElement.style.height = '100%'; 
 
@@ -89,21 +94,22 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  // Функция для переключения полноэкранного режима
+  /// Function to switch full screen mode
   void _toggleFullscreen() {
-    // Получаем текущий элемент в полноэкранном режиме
+    /// Get the current element in fullscreen mode
     var fullscreenElement = html.document.fullscreenElement;
     var image = html.document.getElementById('Image');
 
     if (fullscreenElement == null) {
-      // Переходим в полноэкранный режим
+      /// Switch to full screen mode
       image?.requestFullscreen();
     } else {
-      // Выход из полноэкранного режима
+      /// Exit full screen mode
       html.document.exitFullscreen();
     }
   }
 
+  /// check is not Empty TextField URL
   void _checkIfButtonShouldBeEnabled(String text) {
     setState(() {
       _isActiveButton = text.isNotEmpty;
@@ -118,12 +124,14 @@ class _HomePageState extends State<HomePage> {
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(32, 16, 32, 16),
+            /// The main widget that contains instructions for displaying widgets
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Expanded(
                   child: AspectRatio(
                     aspectRatio: 1,
+                    /// container for an image, which the application will then add via the _addImageToHtml function
                     child: Container(
                       decoration: BoxDecoration(
                         color: Colors.grey,
@@ -159,6 +167,7 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
           ),
+          /// Add darkening when opening the action menu
           if (_isDarkened)
             ColorFiltered(
               colorFilter: const ColorFilter.mode(Colors.black54, BlendMode.darken),
@@ -193,7 +202,7 @@ class _HomePageState extends State<HomePage> {
           });
         },
         onSelected: (value) {
-          // Обработать выбор
+          /// Обработать выбор
           if (value == 'Enter fullscreen') {
             _toggleFullscreen();
             setState(() {
